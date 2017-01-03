@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Document</title>
+</head>
+<style>
+main {
+    width: 500px;
+    margin: 0 auto;
+}
+main img {
+    width: 100%;
+}
+</style>
+<body>
+    <main>
+        <img 
+            src="https://ws4.sinaimg.cn/large/7d051389gw1fbb7o23ximj21io20w4qp.jpg" 
+            zoom="https://ws4.sinaimg.cn/large/7d051389gw1fbb7o23ximj21io20w4qp.jpg"
+        >
+    </main>
+</body>
+<script src="../dist/js/main.js"></script>
+<script>
+let a = new zoom()
+a.listen('img[zoom]')
+</script>
+</html>
