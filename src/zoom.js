@@ -1,6 +1,7 @@
 export default class Zoom {
     constructor (options) {
         this.body = document.body
+        this.show = false
     }
     /**
      * 绑定el
@@ -20,10 +21,16 @@ export default class Zoom {
             return
         }
 
-        el.addEventListener('click', (e) => {
-            console.log(1)
-        })
+        el.addEventListener('click', (e) => this.binding(e))
 
         return this
+    }
+
+    binding (e) {
+        this.show ? console.log(1) : this.open()
+    }
+    
+    open () {
+        
     }
 }
