@@ -27,7 +27,7 @@ export default class Zoom {
     }
 
     binding (e) {
-        this.show ? console.log(1) : this.open()
+        this.show ? console.log(2) : this.open()
     }
     
     open () {

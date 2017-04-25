@@ -1,31 +1,17 @@
-/*module.exports = {
-    "env": {
-        "es6": true,
-        "node": true
-    },
-    "parser": 'babel-eslint',
-    "extends": "eslint:recommended",
-    "parserOptions": {
-        "sourceType": "module",
-        "allowImportExportEverywhere": false
-    },
-    "rules": {
-        "no-console":0,
-        "indent": [
-            "error",
-            4
-        ],
-        "linebreak-style": [
-            "error",
-            "windows"
-        ],
-        "quotes": [
-            "error",
-            "single"
-        ],
-        "semi": [
-            "error",
-            "never"
-        ]
-    }
-};*/
+module.exports = {
+  root: true,
+  parser: 'babel-eslint',
+  parserOptions: {
+    sourceType: 'module'
+  },
+  // add your custom rules here
+  'rules': {
+    // allow paren-less arrow functions
+    'indent': [2, 4, { 'SwitchCase': 1 }],  
+    'arrow-parens': 0,
+    // allow async-await
+    'generator-star-spacing': 0,
+    // allow debugger during development
+    'no-debugger': process.env.NODE_ENV === 'production' ? 2 : 0
+  }
+}

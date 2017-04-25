@@ -1,14 +1,19 @@
-const rollup = require('rollup')
-const buble = require('rollup-plugin-buble')
+const babel = require('rollup-plugin-babel')
+const eslint = require('rollup-plugin-eslint')
+const uglify = require('rollup-plugin-uglify')
 
-export default {
+module.exports =  {
     entry: 'src/index.js',
     dest: 'dist/js/main.js',
     format: 'umd',
     sourceMap: 'inline',
     moduleName: 'zoom',
     plugins: [
-        buble()
+        babel({
+            exclude: 'node_modules/**'
+        }),
+        eslint({ /* your options */ }),
+        uglify()
     ],
     banner: 
 `/**
