@@ -1,5 +1,5 @@
 import defaultOption from './config'
-import { parseDom } from './lib/dom'
+import { parseDom, setScale } from './lib/dom'
 import { setStyle } from './lib/styles'
 export default class Zoom {
     constructor (options) {
@@ -10,7 +10,7 @@ export default class Zoom {
         this.instance = {
             options: {}
         }
-        this.show = false
+        this.shown = false
         Object.keys(defaultOption).forEach(type => this[type] = options[type] || defaultOption[type])
         this.init()
     }
@@ -35,34 +35,34 @@ export default class Zoom {
     }
 
     binding (event) {
-        this.show ? console.log(2) : this.open(event)
+        this.open(event)
     }
     
     open (event) {
+        if (this.shown) {
+            return this
+        }
+        this.shown = true
         let options = this.instance.options
-        const rect = event.getBoundingClientRect()
+        const rect = event.target.getBoundingClientRect()
+        const scale = setScale(rect)
         let maskDom = parseDom(this.maskHtml)
         maskDom.addEventListener('click', e => {
             this.close(event)
         })
+        console.log(rect)
         options = {
             windowHeight: window.innerHeight,
             windowWidth: document.body.clientWidth,
-            imgOffsetTop: event.target.offsetTop,
-            imgOffsetLeft: event.target.offsetLeft,
-            width: event.target.clientWidth,
-            height: event.target.clientHeight,
             windowScrollY: window.scrollY,
             windowScrollX: window.scrollX
         }
-        options.scale = options.windowHeight / options.height
         options.transformY = options.windowScrollY - (options.windowWidth / 2),
-        options.transformX = options.windowScrollY - (options.windowHeight / 2)
-        console.dir(options)
+        options.transformX = (rect.height - (rect.height * scale)) / 2 + rect.top
         this.style.open = {
             position: 'relative',
             zIndex: '233',
-            transform: `translate3d(0, ${options.transformX}px, 0) scale(${options.scale}, ${options.scale})`,
+            transform: `translate3d(0, ${-options.transformX}px, 0) scale(${scale}, ${scale})`,
             transition: '0.4s cubic-bezier(0.4, 0, 0, 1)'
         }
         setStyle(event.target, this.style.open)
@@ -70,6 +70,7 @@ export default class Zoom {
     }
     close (event) {
         let options = this.instance.options
+        this.shown = false
         setStyle(event.target, { transform: 'none' })
     }
 }

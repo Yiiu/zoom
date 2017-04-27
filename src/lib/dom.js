@@ -9,3 +9,7 @@ export function parseDom(arg) {
     }
     return child.length > 1 ? child : child[0]
 }
+
+export function setScale (rest) {
+    return Math.min(window.innerHeight / rest.height, document.body.offsetWidth / rest.width)
+}
