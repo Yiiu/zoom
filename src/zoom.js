@@ -1,5 +1,5 @@
 import defaultOption from './config'
-import { parseDom, setScale } from './lib/dom'
+import { parseDom, setScale, delayFun } from './lib/dom'
 import { setStyle } from './lib/styles'
 export default class Zoom {
     constructor (options) {
@@ -19,12 +19,10 @@ export default class Zoom {
         this.listen(this.imgs)
     }
     /**
-     * 绑定<e></e>l
+     * 绑定el
      * 
      * @param {String|Element} el
-     * @returns
-     * 
-     * @memberOf Zoom
+     * @returns {Zoom}
      */
     listen (el) {
         el.forEach(event => {
@@ -37,27 +35,31 @@ export default class Zoom {
     binding (event) {
         this.open(event)
     }
-    
+
+    /**
+     * 打开
+     *
+     * @param {String|Element} event
+     * @returns {Zoom}
+     */
     open (event) {
         if (this.shown) {
             return this
         }
         this.shown = true
-        let options = this.instance.options
         const rect = event.target.getBoundingClientRect()
         const scale = setScale(rect)
-        let maskDom = parseDom(this.maskHtml)
+        let maskDom = this.instance.mask = parseDom(this.maskHtml)
         maskDom.addEventListener('click', e => {
             this.close(event)
         })
-        console.log(rect)
-        options = {
+        let options = this.instance.options = {
             windowHeight: window.innerHeight,
             windowWidth: document.body.clientWidth,
             windowScrollY: window.scrollY,
             windowScrollX: window.scrollX
         }
-        options.transformY = options.windowScrollY - (options.windowWidth / 2),
+        options.transformY = options.windowScrollY - (options.windowWidth / 2)
         options.transformX = (rect.height - (rect.height * scale)) / 2 + rect.top
         this.style.open = {
             position: 'relative',
@@ -67,10 +69,15 @@ export default class Zoom {
         }
         setStyle(event.target, this.style.open)
         this.body.appendChild(maskDom)
+        document.addEventListener('scroll', function () {
+            delayFun(function () {
+                console.log(1)
+            }, 300)
+        })
     }
     close (event) {
-        let options = this.instance.options
+        document.body.removeChild(this.instance.mask)
         this.shown = false
-        setStyle(event.target, { transform: 'none' })
+        setStyle(event.target, { transform: 'none', zIndex: '', position: '' })
     }
 }

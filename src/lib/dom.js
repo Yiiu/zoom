@@ -13,3 +13,8 @@ export function parseDom(arg) {
 export function setScale (rest) {
     return Math.min(window.innerHeight / rest.height, document.body.offsetWidth / rest.width)
 }
+export function delayFun (Fn, time = 300) {
+    let timer
+    if (timer) clearTimeout(timer)
+    timer = setTimeout(Fn, time)
+}

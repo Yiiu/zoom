@@ -44,3 +44,4 @@ dist/
 npm-debug.log
 
 logs/
+.idea/
