@@ -15,7 +15,7 @@ function relative (path) {
     return fp.join(__dirname, path)
 }
 
-app.use(express.static(relative('../demo')))
+app.use(express.static(relative('../docs')))
 app.use('/dist', express.static(relative('../dist')))
 
 app.listen(PORT, function () {

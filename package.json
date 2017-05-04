@@ -15,6 +15,7 @@
     "rollup-watch": "^3.2.2"
   },
   "scripts": {
-    "dev": "cross-env PORT=3000 node build/build.js"
+    "dev": "cross-env PORT=3000 node build/build.js",
+    "build": "rollup --config build/rollup.config.js"
   }
 }

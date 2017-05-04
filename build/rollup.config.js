@@ -14,7 +14,7 @@ if (!process.env.NODE_ENV) {
 
 module.exports =  {
     entry: 'src/index.js',
-    dest: 'dist/js/main.js',
+    dest: 'dist/js/zoom.js',
     format: 'umd',
     sourceMap: 'inline',
     moduleName: 'zoom',
