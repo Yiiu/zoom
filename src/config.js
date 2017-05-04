@@ -1,6 +1,3 @@
 export default {
-    defaultSelector: 'img[data-action=zoom]',
-    maskHtml: `
-        <div class="mask"></div>
-    `
+    defaultSelector: 'img[data-action=zoom]'
 }

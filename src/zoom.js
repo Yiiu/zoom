@@ -1,6 +1,6 @@
 import defaultOption from './config'
-import { parseDom, setScale, delayFun } from './lib/dom'
-import { setStyle } from './lib/styles'
+import Imgs from './img'
+import Mask from './mask'
 export default class Zoom {
     constructor (options) {
         this.body = document.body
@@ -8,9 +8,12 @@ export default class Zoom {
         this.imgs = []
         this.style = {}
         this.instance = {
-            options: {}
+            options: {},
+            event: null
         }
+        this.lock = false   // 过渡时不允许操作
         this.shown = false
+        this.Mask = new Mask()
         Object.keys(defaultOption).forEach(type => this[type] = options[type] || defaultOption[type])
         this.init()
     }
@@ -20,20 +23,25 @@ export default class Zoom {
     }
     /**
      * 绑定el
-     * 
+     *
      * @param {String|Element} el
      * @returns {Zoom}
      */
     listen (el) {
         el.forEach(event => {
-            event.addEventListener('click', event => this.binding(event))
+            event.addEventListener('click', this.handleClick.bind(this))
         })
+        document.addEventListener('scroll', this.close.bind(this))
 
         return this
     }
 
-    binding (event) {
-        this.open(event)
+    handleClick () {
+        if (!this.shown) {
+            this.open(event.target)
+        } else {
+            this.close()
+        }
     }
 
     /**
@@ -43,41 +51,46 @@ export default class Zoom {
      * @returns {Zoom}
      */
     open (event) {
-        if (this.shown) {
-            return this
-        }
-        this.shown = true
-        const rect = event.target.getBoundingClientRect()
-        const scale = setScale(rect)
-        let maskDom = this.instance.mask = parseDom(this.maskHtml)
-        maskDom.addEventListener('click', e => {
-            this.close(event)
-        })
-        let options = this.instance.options = {
-            windowHeight: window.innerHeight,
-            windowWidth: document.body.clientWidth,
-            windowScrollY: window.scrollY,
-            windowScrollX: window.scrollX
-        }
-        options.transformY = options.windowScrollY - (options.windowWidth / 2)
-        options.transformX = (rect.height - (rect.height * scale)) / 2 + rect.top
-        this.style.open = {
+        if (this.lock || this.shown) return this
+        let img = this.instance.event = new Imgs(event)
+        img.style({
             position: 'relative',
-            zIndex: '233',
-            transform: `translate3d(0, ${-options.transformX}px, 0) scale(${scale}, ${scale})`,
-            transition: '0.4s cubic-bezier(0.4, 0, 0, 1)'
-        }
-        setStyle(event.target, this.style.open)
-        this.body.appendChild(maskDom)
-        document.addEventListener('scroll', function () {
-            delayFun(function () {
-                console.log(1)
-            }, 300)
+            transform: `translate3d(${img.offset().y}px, ${img.offset().x}px, 0) scale3d(${img.scale()}, ${img.scale()}, 1)`,
+            transition: '0.4s cubic-bezier(0.4, 0, 0, 1)',
+            zIndex: 2333
         })
+        this.lock = true
+        this.shown = true
+        this.Mask.insert()
+        this.Mask.show()
+        let End = () => {
+            img.event.removeEventListener('transitionend', End)
+            this.lock = false
+        }
+        img.event.addEventListener('transitionend', End)
     }
-    close (event) {
-        document.body.removeChild(this.instance.mask)
+
+    /**
+     * 关闭
+     */
+    close () {
+        if (this.lock || !this.shown) return this
+        let img = this.instance.event
+        this.Mask.hide()
+        img.style({
+            transform: `translate3d(0, 0, 0) scale3d(1, 1, 1)`
+        })
+        this.lock = true
         this.shown = false
-        setStyle(event.target, { transform: 'none', zIndex: '', position: '' })
+        let End = () => {
+            img.event.removeEventListener('transitionend', End)
+            this.lock = false
+            this.Mask.remove()
+            img.style({
+                position: 'relative',
+                zIndex: ''
+            })
+        }
+        img.event.addEventListener('transitionend', End)
     }
 }
